@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CRM System</title>
+
+    <script src="assets/dhxmlui/dhtmlx.js" type="text/javascript"></script> 
+    <link rel="STYLESHEET" type="text/css" href="assets/dhxmlui/dhtmlx.css">
+    <link rel="STYLESHEET" type="text/css" href="assets/css/app.css"> 
+
+</head>
+<body>
+    <div id="winVP" style="position: absolute;left: 0;right: 0;top: 0;bottom: 0;background-color: black;"></div>
+    <script type="text/javascript">
+        var global = {layout: null, signForm: null}; 
+        dhtmlxEvent(window,"load",function(){ 
+            global.layout = new dhtmlXLayoutObject(document.body,"1C"); 
+            global.layout.cells("a").setText("Sign-in");   
+            var formData = [
+				{type: "settings", position: "label-left", labelWidth: 100, inputWidth: 120},
+				{type: "block", inputWidth: "auto", offsetTop: 12, list: [
+					{type: "input", label: "Login", value: ""},
+					{type: "password", label: "Password", value: ""},
+					{type: "checkbox", label: "Remember me", checked: true},
+					{type: "button", name: 'btn-sign-in', value: "Proceed", offsetLeft: 70, offsetTop: 14}
+				]}
+			];
+			
+            global.signForm = global.layout.cells("a").attachForm(formData);
+            global.signForm.attachEvent("onButtonClick", function(name){
+                debugger;
+                global.layout.unload(); 
+                global.layout = new dhtmlXLayoutObject(document.body,"2U"); 
+                global.layout.cells("a").setWidth(300);
+                global.toolbar = global.layout.attachToolbar(); 
+                global.toolbar.setIconsPath("icons/");
+                global.toolbar.loadStruct("data/toolbar.xml");
+                global.toolbar.attachEvent("onclick", function (id){
+                    if (id === 'help') {
+                        global.dhxWins = new dhtmlXWindows();
+                        global.dhxWins.attachViewportTo("winVP");
+                        
+                        global.w1 = global.dhxWins.createWindow("w1", 20, 30, 320, 200);
+                        global.w1.keepInViewport(true);
+                        global.w1.button("close").disable();
+			            //global.w1.attachObject("objId");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

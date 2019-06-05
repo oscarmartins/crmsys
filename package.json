@@ -1,0 +1,33 @@
+{
+  "name": "crmsys",
+  "version": "1.0.0",
+  "description": "crm system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oscarmartins/crmsys.git"
+  },
+  "keywords": [
+    "nodejs",
+    "dhxml",
+    "mongodb"
+  ],
+  "author": "oscarRafael",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oscarmartins/crmsys/issues"
+  },
+  "homepage": "https://github.com/oscarmartins/crmsys#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bluebird": "^3.5.5",
+    "date-format-lite": "^17.7.0",
+    "express": "^4.17.1",
+    "helmet": "^3.18.0",
+    "mongoskin": "^2.1.0",
+    "svelte": "^3.4.4"
+  }
+}

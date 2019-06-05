@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<toolbar>
+	<item id="sep01" type="separator"/>         
+	<item id="help" type="button" text="Help"/>
+</toolbar>
