@@ -354,6 +354,18 @@ mime@1.6.0:
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
 
+minimist@0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
+  integrity sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0=
+
+mkdirp@~0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
+  integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
+  dependencies:
+    minimist "0.0.8"
+
 mongoskin@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/mongoskin/-/mongoskin-2.1.0.tgz#1fda6814b21de53e36b4396f6126c979c5e9ee60"
@@ -378,6 +390,13 @@ nocache@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/nocache/-/nocache-2.1.0.tgz#120c9ffec43b5729b1d5de88cd71aa75a0ba491f"
   integrity sha512-0L9FvHG3nfnnmaEQPjT9xhfN4ISk0A8/2j4M37Np4mcDesJjHgEUfgPhdCyZuFI954tjokaIj/A3NdpFNdEh4Q==
+
+node-persist@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/node-persist/-/node-persist-3.0.4.tgz#c1bb2a7216eec334ab8587edbbe5b535012f96e5"
+  integrity sha512-/0r1KYqeEKrVvxwQ513rAUG7sNndoi+qgXdRutfaaRWc4axVeoINq2s5vOZ6xVUWKm67ML0gR5UhBuha6M8VJg==
+  dependencies:
+    mkdirp "~0.5.1"
 
 on-finished@~2.3.0:
   version "2.3.0"
@@ -482,6 +501,11 @@ setprototypeof@1.1.1:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
+
+svelte@^3.4.4:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.5.1.tgz#fa6cc030a98df4af05e7a325c8b4537d21257c2d"
+  integrity sha512-iMnuyteFGQ8Yl68G/DHTHY1sLwoAMya1eS0ZOHIm/dqn2etR8WEe8hUAoluLryde4Cft4gvMhtHV3NhE60nBmQ==
 
 toidentifier@1.0.0:
   version "1.0.0"

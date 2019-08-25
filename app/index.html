@@ -12,9 +12,34 @@
 
 </head>
 <body>
-    <div id="winVP" style="position: absolute;left: 0;right: 0;top: 0;bottom: 0;background-color: black;"></div>
+    <div id="winVP" style="position: absolute;left: 0;right: 0;top: 0;bottom: 0;background-color: rgba(245, 245, 245, 0);"></div>
     <script type="text/javascript">
-        var global = {layout: null, signForm: null}; 
+
+        let serverapi = null;
+        /**
+        local_server_path: 'http://localhost:8081/orcv2',
+        remote_server_path : 'https://oscarmartins.pt/api/orcv2',
+         **/
+        /**
+        let urlviewcontroller = "//localhost:8081/orcv2/fetchApiPolicy";
+        dhx4.ajax.get(urlviewcontroller, function (xhr) {
+
+            if (xhr && xhr.xmlDoc && xhr.xmlDoc.response) {
+                try {
+                    let response = JSON.parse(xhr.xmlDoc.response);
+                    debugger;
+                } catch (error) {
+                    console.error(error);
+                }
+
+            } else {
+                console.log('not load response in ajax!!! :(');
+            }
+            
+
+        });
+        **/
+        let global = {layout: null, signForm: null}; 
         dhtmlxEvent(window,"load",function(){ 
             global.layout = new dhtmlXLayoutObject(document.body,"1C"); 
             global.layout.cells("a").setText("Sign-in");   
@@ -30,21 +55,89 @@
 			
             global.signForm = global.layout.cells("a").attachForm(formData);
             global.signForm.attachEvent("onButtonClick", function(name){
-                debugger;
+                
                 global.layout.unload(); 
-                global.layout = new dhtmlXLayoutObject(document.body,"2U"); 
-                global.layout.cells("a").setWidth(300);
+                global.layout = new dhtmlXLayoutObject(document.body,"2U");
+                let leftCell = global.layout.cells("a");
+                leftCell.setText('Menu');
+                leftCell.setWidth(201);
+                leftCell.hideArrow();
+                global.mySidebar = leftCell.attachSidebar({
+                    //width: 160,
+                    icons_path: "icons/",
+                    //json: "data/sidebar.json"
+                    onload: function () {
+					    
+				    }
+                });
+
+                global.mySidebar.attachEvent("onBeforeSelect", function(id, lastId){
+                    /**
+                    if ({disk_c: 1, disk_d: 1, disk_e: 1}[id] == 1) {
+                        logEvent("onBeforeSelect", id+", deny selection", lastId);
+                        return false;
+                    }
+                    **/
+                   
+                    return true;
+                });
+
+                var tabId = 1;
+
+                global.mySidebar.attachEvent("onSelect", function(id, lastId){
+                    let tab = global.myTabbar.cells(id);
+                    if (tab && tab._idd === id) {
+                        tab.setActive();
+                    } else {
+                        global.myTabbar.addTab(id, id, null, -1, true, true);
+                        if (this.cells(id).dataNodes.route)
+                            global.myTabbar.tabs(id).attachURL(this.cells(id).dataNodes.route);
+                    }
+                });
+
+                global.mySidebar.loadStruct('/api/sidebar', function () {
+                    for (let it in this.t) {
+                        if (this.t[it].init && this.t[it].init.data) {
+                            this.cells(it).dataNodes = this.t[it].init.data;
+                        }
+                    }
+                    this.conf.selected = '';
+                    this.goToNextItem(true);
+                });
+
+                global.myTabbar = global.layout.cells("b").attachTabbar({
+                    //close_button: true,
+                    tabs: [],
+                    onload: function () {}
+                });
+                global.myTabbar.attachEvent("onTabClick", function(id, lastId){
+                    global.mySidebar.conf.selected = false;
+                    global.mySidebar._setItemInactive(lastId, false);
+                    global.mySidebar._setItemActive(id, true); 
+                });
+                global.myTabbar.attachEvent("onTabClose", function (id) {
+                    if (global.mySidebar.cells(id).isActive()) {
+                        global.mySidebar.conf.selected = false;
+                        global.mySidebar._setItemInactive(id, false);
+                        let alltabs = global.myTabbar.getAllTabs().filter(function (v) {return v != id;});
+                        if (alltabs.length) {
+                            global.mySidebar._setItemActive(alltabs[alltabs.length - 1], true);
+                        }
+                    }
+                    return true;
+                });
                 global.toolbar = global.layout.attachToolbar(); 
                 global.toolbar.setIconsPath("icons/");
                 global.toolbar.loadStruct("data/toolbar.xml");
                 global.toolbar.attachEvent("onclick", function (id){
                     if (id === 'help') {
-                        global.dhxWins = new dhtmlXWindows();
-                        global.dhxWins.attachViewportTo("winVP");
-                        
+                        if (!global.dhxWins) {
+                            global.dhxWins = new dhtmlXWindows();
+                            global.dhxWins.attachViewportTo("winVP");
+                        }
                         global.w1 = global.dhxWins.createWindow("w1", 20, 30, 320, 200);
                         global.w1.keepInViewport(true);
-                        global.w1.button("close").disable();
+                        //global.w1.button("close").disable();
 			            //global.w1.attachObject("objId");
                     }
                 });

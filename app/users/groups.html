@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CRM System - Users Groups Manager</title>
+
+    <script src="../assets/dhxmlui/dhtmlx.js" type="text/javascript"></script> 
+    <link rel="STYLESHEET" type="text/css" href="../assets/dhxmlui/dhtmlx.css">
+    <link rel="STYLESHEET" type="text/css" href="../assets/css/app.css"> 
+
+</head>
+<body>
+    
+    <script type="text/javascript">
+
+        var glayout, gmenu, gtoolbar, gcontactsGrid, gcontactForm, gdpg, ggoserver;
+
+        dhtmlxEvent(window,"load", function (event) {
+            
+            glayout = new dhtmlXLayoutObject(document.body,"2U"); 
+            glayout.cells("a").setText("Gestor Grupos Utilizadores");   
+            glayout.cells("b").setText("Detalhes"); 
+            glayout.cells("b").setWidth(400);
+
+            gmenu = glayout.attachMenu();
+            gmenu.setIconsPath("icons/");
+            gmenu.loadStruct("data/menu.xml"); 
+
+            gtoolbar = glayout.attachToolbar(); 
+            gtoolbar.setIconsPath("icons/");
+            gtoolbar.loadStruct("data/toolbar.xml");
+
+            //Contacts Grid
+            gcontactsGrid = glayout.cells("a").attachGrid();
+            gcontactsGrid.setHeader("ID,Group Name,Group ID,Status");   //sets the headers of columns
+            gcontactsGrid.setColumnIds("id,groupname,groupid,status");  //sets the columns' ids
+            gcontactsGrid.setInitWidths("250,250,250,*");   //sets the initial widths of columns
+            //gcontactsGrid.setColAlign("left,left,left,left");     //sets the alignment of columns
+            //gcontactsGrid.setColTypes("ro,ro,ro,ro");               //sets the types of columns
+            //gcontactsGrid.setColSorting("str,str,str,str");  //sets the sorting types of column
+            //gcontactsGrid.attachHeader("#text_filter,#text_filter,#text_filter");
+            gcontactsGrid.init();
+            gcontactsGrid.load("/api/contact_manager/gridcontactsall","json");
+
+            //gcontactsGrid.setColumnHidden(0,true);
+            //gcontactsGrid.setColumnsVisibility("true,false,false,false");
+
+            //Contacts Details Form
+            gcontactForm = glayout.cells("b").attachForm();
+            gcontactForm.loadStruct("data/form.xml");
+
+            gcontactForm.bind(gcontactsGrid);
+
+            gcontactForm.lock();
+            
+            gdpg = new dataProcessor("/api/users/add_user_group");   //inits dataProcessor
+            
+            gdpg.init(gcontactsGrid);   //associates the dataProcessor instance with the grid
+            
+            //gdpg.init(gcontactForm);
+            
+            gdpg.setTransactionMode('JSON');
+
+            gdpg.defineAction("error", function (node) {
+                debugger;
+                if (node.action === 'error') {
+                    alert(node.data);
+                    var rowId = gcontactsGrid.getSelectedRowId();
+                    if(rowId!=null){
+                        //gcontactsGrid.deleteRow(rowId);
+                        let rindex = gcontactsGrid.getRowIndex(rowId);
+                        gcontactsGrid.selectRow(rindex-1);
+                        gcontactsGrid.selectRowById(rowId);        //selects the newly-created row                          
+                        gcontactForm.setFocusOnFirstActive();//set focus to the 1st form's input   
+                    }
+                }
+
+                return true;
+            });
+
+            gcontactForm.attachEvent("onButtonClick", function(id) {
+
+                if (gcontactForm.isLocked()) {
+                    alert('Deve adicionar um novo grupo.');
+                    return false;
+                }
+
+                ggoserver = true;
+                this.lock();
+                /**
+                this.save();     //sends the values of the updated row to the server
+                **/
+
+                //this.formId = "id"; //id of record which loaded in form 
+                //this.resetDataProcessor("updated");
+                this.save();
+
+                /**
+                gdpg.setUpdated("1", true, 'updated');
+                gdpg.sendData();
+                **/
+                this.unlock();
+                this.clear();
+            });
+
+            gcontactsGrid.attachEvent("onRowSelect", function(id,ind){
+                if (gcontactForm.isLocked()) {
+                    gcontactForm.unlock();
+                }
+            });
+
+            gdpg.attachEvent("onAfterUpdate", function(sid, action, tid, tag){
+                if (action == "inserted"){
+                    gcontactsGrid.selectRowById(tid);        //selects the newly-created row                          
+                    gcontactForm.setFocusOnFirstActive();//set focus to the 1st form's input                              
+                    return true;
+                }
+                if (action == "updated") {
+                    gcontactsGrid.load("/api/contact_manager/gridcontactsall","json");
+                    return true;
+                }
+                return false;
+            });
+
+            gdpg.attachEvent("onBeforeDataSending", function(sid, action, tid, tag){ 
+                if (action == "updated" && ggoserver){
+                    ggoserver = false;
+                    return true;
+                }
+                if (action == "inserted" || action == "deleted") {
+                    return true;
+                }
+                return false;
+            });
+            
+            gtoolbar.attachEvent("onclick",function(id){
+
+                if(id=="addGroup"){ //'newContact' is the id of the button in the gtoolbar
+                    var rowId=gcontactsGrid.uid();                  //generates an unique id
+                    var pos = gcontactsGrid.getRowsNum();  //gets the number of rows in grid
+                    gcontactsGrid.addRow(rowId, ["","", "", "0"], pos);  //adds a new row
+                    gcontactsGrid.selectRowById(rowId);
+                    gcontactForm.setFocusOnFirstActive();   
+                    gcontactForm.unlock();
+                }
+                if(id=="delGroup"){
+                    var rowId = gcontactsGrid.getSelectedRowId();
+                    var rowIndex = gcontactsGrid.getRowIndex(rowId);
+                    if(rowId!=null){
+                        gcontactsGrid.deleteRow(rowId);
+                            if(rowIndex!=(gcontactsGrid.getRowsNum()-1)){
+                                gcontactsGrid.selectRow(rowIndex+1,true);
+                            } else{
+                                gcontactsGrid.selectRow(rowIndex-1,true)
+                            }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
